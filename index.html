@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>한국어 발음 연습</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #1a1814;
+    --paper: #f7f4ee;
+    --paper2: #eee9df;
+    --accent: #c0392b;
+    --muted: #7a7165;
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --red-light: #fce4e4;
+    --border: #ccc5b5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    min-height: 100vh;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 0 2rem;
+  }
+
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  header span {
+    font-style: italic;
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+
+  /* SETUP PANEL */
+  .setup-panel {
+    background: var(--paper2);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .setup-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .setup-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 70px;
+  }
+
+  .setup-panel input[type=password],
+  .setup-panel input[type=text] {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.45rem 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink);
+    outline: none;
+    min-width: 0;
+  }
+
+  .setup-panel input:focus { border-color: var(--accent); }
+
+  .btn-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 3px;
+    padding: 0.45rem 1rem;
+    font-family: 'Spectral', serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-file:hover { background: var(--accent); }
+
+  .btn-demo {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.45rem 1rem;
+    font-family: 'Spectral', serif;
+    font-size: 0.85rem;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .btn-demo:hover { border-color: var(--muted); color: var(--ink); }
+
+  /* PHRASE NAV BAR */
+  .phrase-nav {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .phrase-nav::-webkit-scrollbar { display: none; }
+
+  .nav-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .nav-dot.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .nav-dot.done { background: var(--green); border-color: var(--green); color: white; }
+
+  /* MAIN CARD */
+  .card {
+    margin: 1.5rem;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .card-phrase {
+    text-align: center;
+    padding: 2.5rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .korean-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .meaning-text {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* RECORD BUTTON */
+  .record-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .btn-record {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2.5px solid var(--accent);
+    background: var(--paper);
+    color: var(--accent);
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-record:active, .btn-record:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  .btn-record.recording {
+    background: var(--accent);
+    color: var(--paper);
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.35); }
+    50% { box-shadow: 0 0 0 14px rgba(192,57,43,0); }
+  }
+
+  .record-hint {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* TRANSCRIPT */
+  .transcript-box {
+    margin: 0 1.5rem;
+    background: var(--paper2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+  }
+
+  .box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .transcript-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    min-height: 1.8rem;
+  }
+
+  .transcript-text.placeholder {
+    color: var(--border);
+    font-style: italic;
+    font-family: 'Spectral', serif;
+    font-size: 0.9rem;
+  }
+
+  /* FEEDBACK */
+  .feedback-box {
+    margin: 1rem 1.5rem;
+    border-radius: 4px;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+  }
+
+  .feedback-box.loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  .feedback-box.good { background: var(--green-light); border-color: var(--green); }
+  .feedback-box.bad  { background: var(--red-light); border-color: var(--accent); }
+
+  .feedback-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feedback-title { font-weight: 600; font-size: 1rem; }
+
+  .feedback-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .feedback-score.good { color: var(--green); }
+  .feedback-score.bad  { color: var(--accent); }
+
+  .feedback-body { font-size: 0.9rem; line-height: 1.7; color: var(--ink); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem;
+  }
+
+  .btn-nav {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.25rem;
+    border-radius: 3px;
+    color: var(--ink);
+    font-family: 'Spectral', serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-nav:active, .btn-nav:hover { border-color: var(--ink); background: var(--paper2); }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem 2rem;
+    font-style: italic;
+    line-height: 1.8;
+  }
+
+  .empty-state strong {
+    display: block;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-style: normal;
+    color: var(--ink);
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .saved-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    margin-left: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>한국어 발음 연습</h1>
+  <span>Pronunciation Practice</span>
+</header>
+
+<div class="setup-panel">
+  <div class="setup-row">
+    <span class="setup-label">API Key</span>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." oninput="saveKey()" />
+    <span class="saved-badge" id="savedBadge" style="display:none">✓ salvata</span>
+  </div>
+  <div class="setup-row">
+    <label class="btn-file" for="fileInput">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Carica JSON
+    </label>
+    <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadFile(event)" />
+    <button class="btn-demo" onclick="loadDemo()">Demo (10 frasi)</button>
+  </div>
+</div>
+
+<div class="phrase-nav" id="phraseNav"></div>
+
+<div id="mainContent">
+  <div class="empty-state">
+    <strong>발음 연습</strong>
+    Carica il tuo file JSON giornaliero<br>o usa le frasi demo per iniziare.
+  </div>
+</div>
+
+<script>
+const DEMO_PHRASES = [
+  { korean: "안녕하세요", meaning: "Buongiorno / Ciao (formale)" },
+  { korean: "감사합니다", meaning: "Grazie" },
+  { korean: "죄송합니다", meaning: "Mi dispiace / Scusi" },
+  { korean: "어디에 있어요?", meaning: "Dov'è?" },
+  { korean: "이거 얼마예요?", meaning: "Quanto costa questo?" },
+  { korean: "천천히 말해 주세요", meaning: "Parli lentamente, per favore" },
+  { korean: "잘 모르겠어요", meaning: "Non sono sicuro/a" },
+  { korean: "한국어를 배우고 있어요", meaning: "Sto imparando il coreano" },
+  { korean: "맛있어요!", meaning: "È buono!" },
+  { korean: "또 만나요", meaning: "A presto / Ci vediamo" }
+];
+
+let phrases = [], current = 0, results = {};
+let recognition = null, isRecording = false, transcript = '';
+
+// --- API KEY persistence ---
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('anthropic_key');
+  if (saved) {
+    document.getElementById('apiKey').value = saved;
+    document.getElementById('savedBadge').style.display = 'inline';
+  }
+});
+
+function saveKey() {
+  const k = document.getElementById('apiKey').value.trim();
+  if (k.startsWith('sk-ant-')) {
+    localStorage.setItem('anthropic_key', k);
+    document.getElementById('savedBadge').style.display = 'inline';
+  }
+}
+
+// --- Load phrases ---
+function loadDemo() {
+  phrases = DEMO_PHRASES; current = 0; results = {};
+  render();
+}
+
+function loadFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!Array.isArray(parsed) || !parsed[0].korean) throw new Error();
+      phrases = parsed; current = 0; results = {};
+      render();
+    } catch {
+      alert('JSON non valido. Formato: [{"korean":"...","meaning":"..."}, ...]');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// --- Render ---
+function render() {
+  renderNav();
+  renderMain();
+}
+
+function renderNav() {
+  const nav = document.getElementById('phraseNav');
+  nav.innerHTML = '';
+  phrases.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === current ? ' active' : '') + (results[i] ? ' done' : '');
+    d.textContent = i + 1;
+    d.onclick = () => { current = i; render(); };
+    nav.appendChild(d);
+  });
+  // scroll active dot into view
+  const active = nav.querySelectorAll('.nav-dot')[current];
+  if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+}
+
+function renderMain() {
+  const main = document.getElementById('mainContent');
+  if (!phrases.length) return;
+  const p = phrases[current];
+
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-phrase">
+        <div class="korean-text">${p.korean}</div>
+        <div class="meaning-text">${p.meaning}</div>
+      </div>
+      <div class="record-area">
+        <button class="btn-record" id="btnRecord" onclick="toggleRecording()">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="9" y1="23" x2="15" y2="23"/>
+          </svg>
+        </button>
+        <span class="record-hint" id="recordHint">Tocca per registrare</span>
+      </div>
+    </div>
+
+    <div class="transcript-box">
+      <div class="box-label">Trascrizione rilevata</div>
+      <div class="transcript-text placeholder" id="transcriptDisplay">Parla dopo aver toccato il microfono...</div>
+    </div>
+
+    <div id="feedbackArea"></div>
+
+    <div class="bottom-nav">
+      <button class="btn-nav" onclick="navigate(-1)" ${current === 0 ? 'disabled' : ''}>← Prec.</button>
+      <span class="progress-text">${Object.keys(results).length}/${phrases.length} completate</span>
+      <button class="btn-nav" onclick="navigate(1)" ${current === phrases.length - 1 ? 'disabled' : ''}>Succ. →</button>
+    </div>
+  `;
+
+  if (results[current]) showStoredFeedback(results[current]);
+}
+
+function navigate(dir) {
+  current = Math.max(0, Math.min(phrases.length - 1, current + dir));
+  render();
+}
+
+// --- Speech Recognition ---
+function toggleRecording() {
+  if (isRecording) stopRecording();
+  else startRecording();
+}
+
+function startRecording() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Il tuo browser non supporta la Web Speech API.'); return; }
+
+  recognition = new SR();
+  recognition.lang = 'ko-KR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 3;
+
+  transcript = '';
+  isRecording = true;
+  let userStopped = false;
+
+  const btn = document.getElementById('btnRecord');
+  const hint = document.getElementById('recordHint');
+  const disp = document.getElementById('transcriptDisplay');
+  btn.classList.add('recording');
+  hint.textContent = 'In ascolto... (tocca per fermare)';
+  disp.className = 'transcript-text';
+  disp.textContent = '...';
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) transcript += e.results[i][0].transcript;
+      else interim = e.results[i][0].transcript;
+    }
+    disp.textContent = transcript || interim || '...';
+  };
+
+  recognition.onend = () => {
+    if (!userStopped && isRecording) {
+      try { recognition.start(); } catch(ex) {}
+      return;
+    }
+    isRecording = false;
+    btn.classList.remove('recording');
+    hint.textContent = 'Tocca per registrare';
+    if (transcript.trim()) {
+      disp.textContent = transcript;
+      analyzeWithClaude(transcript.trim());
+    } else {
+      disp.className = 'transcript-text placeholder';
+      disp.textContent = 'Nessun audio rilevato. Riprova.';
+    }
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'no-speech') return;
+    if (e.error === 'not-allowed') {
+      userStopped = true; isRecording = false;
+      btn.classList.remove('recording');
+      hint.textContent = 'Tocca per registrare';
+      disp.className = 'transcript-text placeholder';
+      disp.textContent = 'Permesso microfono negato.';
+    }
+  };
+
+  recognition._userStopped = () => { userStopped = true; };
+  recognition.start();
+}
+
+function stopRecording() {
+  if (recognition) {
+    if (recognition._userStopped) recognition._userStopped();
+    recognition.stop();
+  }
+}
+
+// --- Claude API ---
+async function analyzeWithClaude(spokenText) {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { showErrorFeedback('Inserisci la tua API key Anthropic.'); return; }
+
+  const { korean, meaning } = phrases[current];
+  const feedbackArea = document.getElementById('feedbackArea');
+  feedbackArea.innerHTML = `<div class="feedback-box loading"><div class="spinner"></div> Analisi in corso...</div>`;
+
+  const prompt = `Sei un esperto di fonetica coreana che aiuta studenti italiani.
+
+Frase target: "${korean}" (significato: "${meaning}")
+Trascrizione di ciò che lo studente ha detto: "${spokenText}"
+
+Rispondi SOLO con JSON (niente altro):
+{
+  "score": <0-100>,
+  "title": "<titolo breve in italiano>",
+  "analysis": "<analisi dettagliata in italiano: cosa era giusto, cosa sbagliato, suggerimenti. Cita i fonemi coreani se utile.>",
+  "diff": "<confronto se ci sono differenze, altrimenti stringa vuota>"
+}
+
+Score ≥ 80 = corretto. Considera varianti fonetiche accettabili (연음화, 경음화 ecc.).`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || resp.statusText); }
+    const data = await resp.json();
+    const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(raw);
+    result.spoken = spokenText;
+    results[current] = result;
+    renderNav();
+    showStoredFeedback(result);
+  } catch(e) {
+    showErrorFeedback('Errore API: ' + e.message);
+  }
+}
+
+function showStoredFeedback(result) {
+  const isGood = result.score >= 80;
+  document.getElementById('feedbackArea').innerHTML = `
+    <div class="feedback-box ${isGood ? 'good' : 'bad'}">
+      <div class="feedback-header">
+        <div class="feedback-title">${result.title}</div>
+        <div class="feedback-score ${isGood ? 'good' : 'bad'}">${result.score}</div>
+      </div>
+      <div class="feedback-body">${result.analysis.replace(/\n/g, '<br>')}
+        ${result.diff ? `<br><br><strong>Confronto:</strong> ${result.diff}` : ''}
+        <br><br><small style="color:var(--muted)">Trascritto: ${result.spoken}</small>
+      </div>
+    </div>`;
+}
+
+function showErrorFeedback(msg) {
+  document.getElementById('feedbackArea').innerHTML =
+    `<div class="feedback-box bad"><div class="feedback-title">Errore</div><div class="feedback-body">${msg}</div></div>`;
+}
+</script>
+</body>
+</html>
