@@ -614,7 +614,6 @@ function startRecording() {
   transcript = '';
   isRecording = true;
   let userStopped = false;
-  let lastResultIndex = 0;
 
   const btn = document.getElementById('btnRecord');
   const hint = document.getElementById('recordHint');
@@ -624,15 +623,13 @@ function startRecording() {
   if (disp) { disp.className = 'transcript-text'; disp.textContent = '...'; }
 
   mainRec.onresult = (e) => {
-    let interim = '';
-    for (let i = Math.max(e.resultIndex, lastResultIndex); i < e.results.length; i++) {
-      if (e.results[i].isFinal) {
-        transcript += e.results[i][0].transcript;
-        lastResultIndex = i + 1;
-      } else {
-        interim = e.results[i][0].transcript;
-      }
+    // Rebuild from scratch each event to avoid duplicates on restart
+    let final = '', interim = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim = e.results[i][0].transcript;
     }
+    transcript = final;
     if (disp) disp.textContent = transcript || interim || '...';
   };
 
