@@ -320,7 +320,7 @@
 <body>
 
 <header>
-  <h1>한국어 발음 연습 22:37 26042026</h1>
+  <h1>한국어 발음 연습</h1>
   <span>Pronunciation Practice</span>
 </header>
 
@@ -605,12 +605,6 @@ function startRecording() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert('Web Speech API non supportata.'); return; }
 
-  mainRec = new SR();
-  mainRec.lang = 'ko-KR';
-  mainRec.continuous = true;
-  mainRec.interimResults = true;
-  mainRec.maxAlternatives = 3;
-
   transcript = '';
   isRecording = true;
   let userStopped = false;
@@ -622,58 +616,70 @@ function startRecording() {
   if (hint) hint.textContent = 'In ascolto... (tocca per fermare)';
   if (disp) { disp.className = 'transcript-text'; disp.textContent = '...'; }
 
-  mainRec.onresult = (e) => {
-    // Rebuild from scratch each event to avoid duplicates on restart
-    let final = '', interim = '';
-    for (let i = 0; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript;
-      else interim = e.results[i][0].transcript;
-    }
-    transcript = final;
-    if (disp) disp.textContent = transcript || interim || '...';
-  };
+  function startFresh() {
+    mainRec = new SR();
+    mainRec.lang = 'ko-KR';
+    mainRec.continuous = false;   // one shot — no restart confusion
+    mainRec.interimResults = true;
+    mainRec.maxAlternatives = 1;
 
-  mainRec.onend = () => {
-    if (!userStopped && isRecording) {
-      try { mainRec.start(); } catch(ex) {}
-      return;
-    }
-    isRecording = false;
-    if (btn) btn.classList.remove('recording');
-    if (hint) hint.textContent = 'Tocca per registrare';
+    // accumulator for this single session segment
+    let segmentFinal = '';
 
-    // Restart wake word
-    if (wakeActive) startWakeWord();
+    mainRec.onresult = (e) => {
+      let interim = '';
+      segmentFinal = '';
+      for (let i = 0; i < e.results.length; i++) {
+        if (e.results[i].isFinal) segmentFinal += e.results[i][0].transcript;
+        else interim = e.results[i][0].transcript;
+      }
+      if (disp) disp.textContent = (transcript + segmentFinal) || interim || '...';
+    };
 
-    if (transcript.trim()) {
-      if (disp) disp.textContent = transcript;
-      // Read transcript aloud before analyzing
-      speak('Hai detto: ' + transcript, 'it-IT', () => analyzeWithClaude(transcript.trim()));
-    } else {
-      if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Nessun audio rilevato. Riprova.'; }
-      speak('Nessun audio rilevato. Riprova.');
-    }
-  };
+    mainRec.onend = () => {
+      // commit this segment
+      transcript += segmentFinal;
+      if (userStopped || !isRecording) {
+        // user pressed stop — finalize
+        isRecording = false;
+        if (btn) btn.classList.remove('recording');
+        if (hint) hint.textContent = 'Tocca per registrare';
+        if (wakeActive) startWakeWord();
+        if (transcript.trim()) {
+          if (disp) disp.textContent = transcript;
+          analyzeWithClaude(transcript.trim());
+        } else {
+          if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Nessun audio rilevato. Riprova.'; }
+        }
+      } else {
+        // browser stopped on its own (silence) — restart fresh
+        setTimeout(startFresh, 100);
+      }
+    };
 
-  mainRec.onerror = (e) => {
-    if (e.error === 'no-speech') return;
-    if (e.error === 'not-allowed') {
-      userStopped = true; isRecording = false;
-      if (btn) btn.classList.remove('recording');
-      if (hint) hint.textContent = 'Tocca per registrare';
-      if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Permesso microfono negato.'; }
-      if (wakeActive) startWakeWord();
-    }
-  };
+    mainRec.onerror = (e) => {
+      if (e.error === 'no-speech') return; // silence, onend will restart
+      if (e.error === 'not-allowed') {
+        userStopped = true; isRecording = false;
+        if (btn) btn.classList.remove('recording');
+        if (hint) hint.textContent = 'Tocca per registrare';
+        if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Permesso microfono negato.'; }
+        if (wakeActive) startWakeWord();
+      }
+    };
 
-  mainRec._stop = () => { userStopped = true; };
-  mainRec.start();
+    try { mainRec.start(); } catch(ex) { console.warn('start error', ex); }
+  }
+
+  mainRec = { _stop: () => { userStopped = true; } }; // placeholder until startFresh assigns
+  startFresh();
 }
 
 function stopRecording() {
+  isRecording = false; // signal onend not to restart
   if (mainRec) {
     if (mainRec._stop) mainRec._stop();
-    mainRec.stop();
+    try { mainRec.stop(); } catch(ex) {}
   }
 }
 
