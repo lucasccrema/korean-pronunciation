@@ -16,6 +16,8 @@
     --green: #2d6a4f;
     --green-light: #d8f3dc;
     --red-light: #fce4e4;
+    --blue: #1a4a8a;
+    --blue-light: #e0eaff;
     --border: #ccc5b5;
   }
 
@@ -28,354 +30,291 @@
     min-height: 100vh;
     max-width: 600px;
     margin: 0 auto;
-    padding: 0 0 2rem;
+    padding: 0 0 3rem;
   }
 
   header {
     background: var(--ink);
     color: var(--paper);
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.5rem;
     display: flex;
     align-items: baseline;
     gap: 1rem;
   }
+  header h1 { font-family: 'Noto Serif KR', serif; font-size: 1.15rem; font-weight: 700; }
+  header span { font-style: italic; font-size: 0.78rem; opacity: 0.6; }
 
-  header h1 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--blue);
+    color: white;
+    padding: 0.55rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 34px;
+    letter-spacing: 0.03em;
   }
-
-  header span {
-    font-style: italic;
-    font-size: 0.8rem;
-    opacity: 0.6;
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #4fc3f7;
+    flex-shrink: 0;
   }
+  .status-dot.recording { background: var(--accent); animation: blink 0.8s infinite; }
+  .status-dot.speaking  { background: #81c784; animation: blink 0.8s infinite; }
+  .status-dot.off       { background: #555; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
-  /* SETUP PANEL */
+  /* SETUP */
   .setup-panel {
     background: var(--paper2);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 1.5rem;
+    padding: 0.9rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.7rem;
   }
-
-  .setup-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
+  .setup-row { display: flex; align-items: center; gap: 0.7rem; }
   .setup-label {
     font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
     white-space: nowrap;
-    min-width: 70px;
+    min-width: 68px;
   }
-
-  .setup-panel input[type=password],
-  .setup-panel input[type=text] {
+  .setup-panel input[type=password] {
     flex: 1;
     background: var(--paper);
     border: 1px solid var(--border);
     border-radius: 3px;
-    padding: 0.45rem 0.75rem;
+    padding: 0.42rem 0.7rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--ink);
-    outline: none;
-    min-width: 0;
+    outline: none; min-width: 0;
   }
-
   .setup-panel input:focus { border-color: var(--accent); }
+  .saved-badge { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--green); }
 
   .btn-file {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 3px;
-    padding: 0.45rem 1rem;
-    font-family: 'Spectral', serif;
-    font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 3px;
+    padding: 0.42rem 0.9rem;
+    font-family: 'Spectral', serif; font-size: 0.82rem;
+    cursor: pointer; white-space: nowrap;
   }
-
   .btn-file:hover { background: var(--accent); }
-
   .btn-demo {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0.45rem 1rem;
-    font-family: 'Spectral', serif;
-    font-size: 0.85rem;
-    color: var(--muted);
-    cursor: pointer;
+    background: none; border: 1px solid var(--border);
+    border-radius: 3px; padding: 0.42rem 0.9rem;
+    font-family: 'Spectral', serif; font-size: 0.82rem;
+    color: var(--muted); cursor: pointer;
   }
-
   .btn-demo:hover { border-color: var(--muted); color: var(--ink); }
 
-  /* PHRASE NAV BAR */
-  .phrase-nav {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
+  /* WAKE WORD TOGGLE */
+  .wake-row {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 1.5rem;
+    background: var(--paper2);
     border-bottom: 1px solid var(--border);
-    gap: 0.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
+    font-size: 0.82rem;
   }
+  .toggle {
+    position: relative; width: 40px; height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0;
+    background: var(--border); border-radius: 22px;
+    cursor: pointer; transition: 0.25s;
+  }
+  .slider:before {
+    content: ''; position: absolute;
+    width: 16px; height: 16px;
+    left: 3px; top: 3px;
+    background: white; border-radius: 50%;
+    transition: 0.25s;
+  }
+  input:checked + .slider { background: var(--blue); }
+  input:checked + .slider:before { transform: translateX(18px); }
+  .wake-hint { color: var(--muted); font-size: 0.75rem; font-style: italic; }
 
+  /* PHRASE NAV */
+  .phrase-nav {
+    display: flex; align-items: center;
+    padding: 0.7rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    gap: 0.45rem;
+    overflow-x: auto; scrollbar-width: none;
+  }
   .phrase-nav::-webkit-scrollbar { display: none; }
-
   .nav-dot {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     border: 1.5px solid var(--border);
     background: var(--paper);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--muted);
-    cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    color: var(--muted); cursor: pointer;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: all 0.15s;
   }
+  .nav-dot.active  { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .nav-dot.done    { background: var(--green); border-color: var(--green); color: white; }
 
-  .nav-dot.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
-  .nav-dot.done { background: var(--green); border-color: var(--green); color: white; }
-
-  /* MAIN CARD */
+  /* CARD */
   .card {
-    margin: 1.5rem;
+    margin: 1.25rem 1.25rem 0;
     background: var(--paper);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
+    border-radius: 6px; overflow: hidden;
   }
-
   .card-phrase {
     text-align: center;
-    padding: 2.5rem 1.5rem 2rem;
+    padding: 2.2rem 1.5rem 1.8rem;
     border-bottom: 1px solid var(--border);
   }
-
   .korean-text {
     font-family: 'Noto Serif KR', serif;
     font-size: clamp(1.8rem, 8vw, 2.8rem);
-    font-weight: 700;
-    line-height: 1.4;
-    color: var(--ink);
-    margin-bottom: 0.75rem;
+    font-weight: 700; line-height: 1.4;
+    color: var(--ink); margin-bottom: 0.6rem;
   }
+  .meaning-text { font-style: italic; color: var(--muted); font-size: 0.92rem; }
 
-  .meaning-text {
-    font-style: italic;
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
-  /* RECORD BUTTON */
+  /* RECORD */
   .record-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1.5rem;
-    gap: 1rem;
+    display: flex; flex-direction: column;
+    align-items: center; padding: 1.8rem 1.5rem;
+    gap: 0.9rem;
   }
-
   .btn-record {
-    width: 80px;
-    height: 80px;
+    width: 78px; height: 78px;
     border-radius: 50%;
     border: 2.5px solid var(--accent);
-    background: var(--paper);
-    color: var(--accent);
+    background: var(--paper); color: var(--accent);
     font-size: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
-
-  .btn-record:active, .btn-record:hover {
-    background: var(--accent);
-    color: var(--paper);
-  }
-
+  .btn-record:active, .btn-record:hover { background: var(--accent); color: var(--paper); }
   .btn-record.recording {
-    background: var(--accent);
-    color: var(--paper);
+    background: var(--accent); color: var(--paper);
     animation: pulse 1s infinite;
   }
-
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.35); }
-    50% { box-shadow: 0 0 0 14px rgba(192,57,43,0); }
+    0%,100%{ box-shadow: 0 0 0 0 rgba(192,57,43,0.35); }
+    50%    { box-shadow: 0 0 0 14px rgba(192,57,43,0); }
   }
-
-  .record-hint {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-style: italic;
-    text-align: center;
-  }
+  .record-hint { font-size: 0.82rem; color: var(--muted); font-style: italic; text-align: center; }
 
   /* TRANSCRIPT */
   .transcript-box {
-    margin: 0 1.5rem;
+    margin: 0 1.25rem;
     background: var(--paper2);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1rem 1.25rem;
+    border-radius: 4px; padding: 0.9rem 1.1rem;
   }
-
   .box-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 0.35rem;
   }
-
   .transcript-text {
     font-family: 'Noto Serif KR', serif;
-    font-size: 1.3rem;
-    color: var(--ink);
-    min-height: 1.8rem;
+    font-size: 1.25rem; color: var(--ink); min-height: 1.7rem;
   }
-
   .transcript-text.placeholder {
-    color: var(--border);
-    font-style: italic;
-    font-family: 'Spectral', serif;
-    font-size: 0.9rem;
+    color: var(--border); font-style: italic;
+    font-family: 'Spectral', serif; font-size: 0.88rem;
   }
 
   /* FEEDBACK */
   .feedback-box {
-    margin: 1rem 1.5rem;
-    border-radius: 4px;
-    padding: 1.25rem;
+    margin: 0.9rem 1.25rem;
+    border-radius: 4px; padding: 1.1rem;
     border: 1px solid var(--border);
   }
-
   .feedback-box.loading {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--muted);
-    font-style: italic;
-    font-size: 0.9rem;
+    display: flex; align-items: center;
+    gap: 0.7rem; color: var(--muted);
+    font-style: italic; font-size: 0.88rem;
   }
-
   .feedback-box.good { background: var(--green-light); border-color: var(--green); }
   .feedback-box.bad  { background: var(--red-light); border-color: var(--accent); }
-
   .feedback-header {
-    display: flex;
-    align-items: flex-start;
+    display: flex; align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+    gap: 1rem; margin-bottom: 0.45rem;
   }
-
-  .feedback-title { font-weight: 600; font-size: 1rem; }
-
+  .feedback-title { font-weight: 600; font-size: 0.97rem; }
   .feedback-score {
     font-family: 'DM Mono', monospace;
-    font-size: 2rem;
-    font-weight: 500;
-    line-height: 1;
-    flex-shrink: 0;
+    font-size: 1.9rem; font-weight: 500;
+    line-height: 1; flex-shrink: 0;
   }
-
   .feedback-score.good { color: var(--green); }
   .feedback-score.bad  { color: var(--accent); }
-
-  .feedback-body { font-size: 0.9rem; line-height: 1.7; color: var(--ink); }
+  .feedback-body { font-size: 0.88rem; line-height: 1.7; color: var(--ink); }
 
   /* BOTTOM NAV */
   .bottom-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1.5rem;
+    display: flex; justify-content: space-between;
+    align-items: center; margin: 1rem 1.25rem;
   }
-
   .btn-nav {
-    background: none;
-    border: 1px solid var(--border);
-    padding: 0.6rem 1.25rem;
-    border-radius: 3px;
+    background: none; border: 1px solid var(--border);
+    padding: 0.55rem 1.1rem; border-radius: 3px;
     color: var(--ink);
-    font-family: 'Spectral', serif;
-    font-size: 0.9rem;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    font-family: 'Spectral', serif; font-size: 0.88rem;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
-
   .btn-nav:active, .btn-nav:hover { border-color: var(--ink); background: var(--paper2); }
   .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-
   .progress-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-    text-align: center;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    color: var(--muted); text-align: center;
   }
 
-  /* EMPTY STATE */
+  /* EMPTY */
   .empty-state {
-    text-align: center;
-    color: var(--muted);
-    padding: 3rem 2rem;
-    font-style: italic;
+    text-align: center; color: var(--muted);
+    padding: 3rem 2rem; font-style: italic; line-height: 1.8;
+  }
+  .empty-state strong {
+    display: block; font-family: 'Noto Serif KR', serif;
+    font-size: 2rem; margin-bottom: 1rem;
+    font-style: normal; color: var(--ink);
+  }
+
+  /* COMMANDS CHEATSHEET */
+  .cheatsheet {
+    margin: 0.5rem 1.25rem;
+    background: var(--blue-light);
+    border: 1px solid #b0c4de;
+    border-radius: 4px; padding: 0.75rem 1rem;
+    font-size: 0.78rem; color: var(--blue);
     line-height: 1.8;
   }
+  .cheatsheet strong { font-weight: 700; }
 
-  .empty-state strong {
-    display: block;
-    font-family: 'Noto Serif KR', serif;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-style: normal;
-    color: var(--ink);
-  }
-
-  /* Spinner */
   .spinner {
-    width: 16px; height: 16px;
+    width: 15px; height: 15px;
     border: 2px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    flex-shrink: 0;
+    animation: spin 0.7s linear infinite; flex-shrink: 0;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .saved-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--green);
-    margin-left: 0.5rem;
-  }
 </style>
 </head>
 <body>
@@ -385,6 +324,11 @@
   <span>Pronunciation Practice</span>
 </header>
 
+<div class="status-bar">
+  <div class="status-dot off" id="statusDot"></div>
+  <span id="statusText">Wake word disattivato</span>
+</div>
+
 <div class="setup-panel">
   <div class="setup-row">
     <span class="setup-label">API Key</span>
@@ -393,7 +337,7 @@
   </div>
   <div class="setup-row">
     <label class="btn-file" for="fileInput">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Carica JSON
     </label>
     <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadFile(event)" />
@@ -401,8 +345,16 @@
   </div>
 </div>
 
-<div class="phrase-nav" id="phraseNav"></div>
+<div class="wake-row">
+  <label class="toggle">
+    <input type="checkbox" id="wakeToggle" onchange="toggleWakeWord()" />
+    <span class="slider"></span>
+  </label>
+  <span>Comandi vocali</span>
+  <span class="wake-hint">— "pronto" · "fine" · "avanti" · "indietro"</span>
+</div>
 
+<div class="phrase-nav" id="phraseNav"></div>
 <div id="mainContent">
   <div class="empty-state">
     <strong>발음 연습</strong>
@@ -411,6 +363,7 @@
 </div>
 
 <script>
+// ─── DEMO DATA ───────────────────────────────────────────────────────────────
 const DEMO_PHRASES = [
   { korean: "안녕하세요", meaning: "Buongiorno / Ciao (formale)" },
   { korean: "감사합니다", meaning: "Grazie" },
@@ -424,10 +377,44 @@ const DEMO_PHRASES = [
   { korean: "또 만나요", meaning: "A presto / Ci vediamo" }
 ];
 
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let phrases = [], current = 0, results = {};
-let recognition = null, isRecording = false, transcript = '';
+let mainRec = null, isRecording = false, transcript = '';
+let wakeRec = null, wakeActive = false;
+let isSpeaking = false;
 
-// --- API KEY persistence ---
+// ─── SPEECH SYNTHESIS ────────────────────────────────────────────────────────
+function speak(text, lang = 'it-IT', onEnd = null) {
+  if (!window.speechSynthesis) { if (onEnd) onEnd(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.92;
+  u.pitch = 1;
+  isSpeaking = true;
+  setStatus('speaking', '🔊 ' + text.slice(0, 60) + (text.length > 60 ? '…' : ''));
+  u.onend = u.onerror = () => {
+    isSpeaking = false;
+    if (onEnd) onEnd();
+    else if (wakeActive) setStatus('listening', 'In ascolto — dì "pronto" per iniziare');
+    else setStatus('off', 'Comandi vocali disattivati');
+  };
+  window.speechSynthesis.speak(u);
+}
+
+function speakKorean(text, onEnd = null) {
+  speak(text, 'ko-KR', onEnd);
+}
+
+// ─── STATUS BAR ──────────────────────────────────────────────────────────────
+function setStatus(state, text) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  dot.className = 'status-dot ' + state;
+  txt.textContent = text;
+}
+
+// ─── API KEY ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('anthropic_key');
   if (saved) {
@@ -444,10 +431,11 @@ function saveKey() {
   }
 }
 
-// --- Load phrases ---
+// ─── LOAD PHRASES ────────────────────────────────────────────────────────────
 function loadDemo() {
   phrases = DEMO_PHRASES; current = 0; results = {};
   render();
+  speak('Caricate dieci frasi demo. Di\' "pronto" per iniziare.');
 }
 
 function loadFile(e) {
@@ -460,6 +448,7 @@ function loadFile(e) {
       if (!Array.isArray(parsed) || !parsed[0].korean) throw new Error();
       phrases = parsed; current = 0; results = {};
       render();
+      speak(`Caricate ${phrases.length} frasi. Di' "pronto" per iniziare.`);
     } catch {
       alert('JSON non valido. Formato: [{"korean":"...","meaning":"..."}, ...]');
     }
@@ -467,11 +456,8 @@ function loadFile(e) {
   reader.readAsText(file);
 }
 
-// --- Render ---
-function render() {
-  renderNav();
-  renderMain();
-}
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() { renderNav(); renderMain(); }
 
 function renderNav() {
   const nav = document.getElementById('phraseNav');
@@ -480,10 +466,9 @@ function renderNav() {
     const d = document.createElement('div');
     d.className = 'nav-dot' + (i === current ? ' active' : '') + (results[i] ? ' done' : '');
     d.textContent = i + 1;
-    d.onclick = () => { current = i; render(); };
+    d.onclick = () => { current = i; render(); readCurrentPhrase(); };
     nav.appendChild(d);
   });
-  // scroll active dot into view
   const active = nav.querySelectorAll('.nav-dot')[current];
   if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth' });
 }
@@ -494,6 +479,10 @@ function renderMain() {
   const p = phrases[current];
 
   main.innerHTML = `
+    <div class="cheatsheet">
+      <strong>Comandi:</strong>
+      "pronto" → inizia · "fine" → ferma · "avanti" → prossima · "indietro" → precedente
+    </div>
     <div class="card">
       <div class="card-phrase">
         <div class="korean-text">${p.korean}</div>
@@ -511,20 +500,16 @@ function renderMain() {
         <span class="record-hint" id="recordHint">Tocca per registrare</span>
       </div>
     </div>
-
     <div class="transcript-box">
       <div class="box-label">Trascrizione rilevata</div>
       <div class="transcript-text placeholder" id="transcriptDisplay">Parla dopo aver toccato il microfono...</div>
     </div>
-
     <div id="feedbackArea"></div>
-
     <div class="bottom-nav">
       <button class="btn-nav" onclick="navigate(-1)" ${current === 0 ? 'disabled' : ''}>← Prec.</button>
       <span class="progress-text">${Object.keys(results).length}/${phrases.length} completate</span>
       <button class="btn-nav" onclick="navigate(1)" ${current === phrases.length - 1 ? 'disabled' : ''}>Succ. →</button>
-    </div>
-  `;
+    </div>`;
 
   if (results[current]) showStoredFeedback(results[current]);
 }
@@ -534,102 +519,189 @@ function navigate(dir) {
   render();
 }
 
-// --- Speech Recognition ---
+function readCurrentPhrase() {
+  if (!phrases.length) return;
+  speakKorean(phrases[current].korean);
+}
+
+// ─── WAKE WORD ───────────────────────────────────────────────────────────────
+function toggleWakeWord() {
+  wakeActive = document.getElementById('wakeToggle').checked;
+  if (wakeActive) startWakeWord();
+  else stopWakeWord();
+}
+
+function startWakeWord() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Web Speech API non supportata.'); return; }
+
+  wakeRec = new SR();
+  wakeRec.lang = 'it-IT';
+  wakeRec.continuous = true;
+  wakeRec.interimResults = false;
+
+  wakeRec.onresult = (e) => {
+    if (isSpeaking) return; // ignore commands while speaking
+    const said = e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
+    console.log('Wake heard:', said);
+
+    if (said.includes('pronto') && !isRecording) {
+      speak('In ascolto', 'it-IT', () => startRecording());
+    } else if ((said.includes('fine') || said.includes('stop')) && isRecording) {
+      stopRecording();
+    } else if (said.includes('avanti') && !isRecording) {
+      if (current < phrases.length - 1) {
+        navigate(1);
+        speakKorean(phrases[current].korean);
+      } else {
+        speak('Sei all\'ultima frase.');
+      }
+    } else if (said.includes('indietro') && !isRecording) {
+      if (current > 0) {
+        navigate(-1);
+        speakKorean(phrases[current].korean);
+      } else {
+        speak('Sei alla prima frase.');
+      }
+    } else if (said.includes('ripeti') && !isRecording) {
+      if (phrases.length) speakKorean(phrases[current].korean);
+    }
+  };
+
+  wakeRec.onend = () => {
+    if (wakeActive) {
+      try { wakeRec.start(); } catch(ex) {}
+    }
+  };
+
+  wakeRec.onerror = (e) => {
+    if (e.error === 'no-speech') return;
+    console.warn('Wake error:', e.error);
+  };
+
+  try {
+    wakeRec.start();
+    setStatus('listening', 'In ascolto — dì "pronto" per iniziare');
+  } catch(ex) {
+    setStatus('off', 'Errore avvio comandi vocali');
+  }
+}
+
+function stopWakeWord() {
+  if (wakeRec) { try { wakeRec.stop(); } catch(ex) {} wakeRec = null; }
+  setStatus('off', 'Comandi vocali disattivati');
+}
+
+// ─── MAIN RECORDING ──────────────────────────────────────────────────────────
 function toggleRecording() {
   if (isRecording) stopRecording();
   else startRecording();
 }
 
 function startRecording() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { alert('Il tuo browser non supporta la Web Speech API.'); return; }
+  // Pause wake word while recording Korean
+  if (wakeRec) { try { wakeRec.stop(); } catch(ex) {} }
 
-  recognition = new SR();
-  recognition.lang = 'ko-KR';
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 3;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Web Speech API non supportata.'); return; }
+
+  mainRec = new SR();
+  mainRec.lang = 'ko-KR';
+  mainRec.continuous = true;
+  mainRec.interimResults = true;
+  mainRec.maxAlternatives = 3;
 
   transcript = '';
   isRecording = true;
   let userStopped = false;
+  let lastResultIndex = 0;
 
   const btn = document.getElementById('btnRecord');
   const hint = document.getElementById('recordHint');
   const disp = document.getElementById('transcriptDisplay');
-  btn.classList.add('recording');
-  hint.textContent = 'In ascolto... (tocca per fermare)';
-  disp.className = 'transcript-text';
-  disp.textContent = '...';
+  if (btn) btn.classList.add('recording');
+  if (hint) hint.textContent = 'In ascolto... (tocca per fermare)';
+  if (disp) { disp.className = 'transcript-text'; disp.textContent = '...'; }
 
-  recognition.onresult = (e) => {
+  mainRec.onresult = (e) => {
     let interim = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) transcript += e.results[i][0].transcript;
-      else interim = e.results[i][0].transcript;
+    for (let i = Math.max(e.resultIndex, lastResultIndex); i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        transcript += e.results[i][0].transcript;
+        lastResultIndex = i + 1;
+      } else {
+        interim = e.results[i][0].transcript;
+      }
     }
-    disp.textContent = transcript || interim || '...';
+    if (disp) disp.textContent = transcript || interim || '...';
   };
 
-  recognition.onend = () => {
+  mainRec.onend = () => {
     if (!userStopped && isRecording) {
-      try { recognition.start(); } catch(ex) {}
+      try { mainRec.start(); } catch(ex) {}
       return;
     }
     isRecording = false;
-    btn.classList.remove('recording');
-    hint.textContent = 'Tocca per registrare';
+    if (btn) btn.classList.remove('recording');
+    if (hint) hint.textContent = 'Tocca per registrare';
+
+    // Restart wake word
+    if (wakeActive) startWakeWord();
+
     if (transcript.trim()) {
-      disp.textContent = transcript;
-      analyzeWithClaude(transcript.trim());
+      if (disp) disp.textContent = transcript;
+      // Read transcript aloud before analyzing
+      speak('Hai detto: ' + transcript, 'it-IT', () => analyzeWithClaude(transcript.trim()));
     } else {
-      disp.className = 'transcript-text placeholder';
-      disp.textContent = 'Nessun audio rilevato. Riprova.';
+      if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Nessun audio rilevato. Riprova.'; }
+      speak('Nessun audio rilevato. Riprova.');
     }
   };
 
-  recognition.onerror = (e) => {
+  mainRec.onerror = (e) => {
     if (e.error === 'no-speech') return;
     if (e.error === 'not-allowed') {
       userStopped = true; isRecording = false;
-      btn.classList.remove('recording');
-      hint.textContent = 'Tocca per registrare';
-      disp.className = 'transcript-text placeholder';
-      disp.textContent = 'Permesso microfono negato.';
+      if (btn) btn.classList.remove('recording');
+      if (hint) hint.textContent = 'Tocca per registrare';
+      if (disp) { disp.className = 'transcript-text placeholder'; disp.textContent = 'Permesso microfono negato.'; }
+      if (wakeActive) startWakeWord();
     }
   };
 
-  recognition._userStopped = () => { userStopped = true; };
-  recognition.start();
+  mainRec._stop = () => { userStopped = true; };
+  mainRec.start();
 }
 
 function stopRecording() {
-  if (recognition) {
-    if (recognition._userStopped) recognition._userStopped();
-    recognition.stop();
+  if (mainRec) {
+    if (mainRec._stop) mainRec._stop();
+    mainRec.stop();
   }
 }
 
-// --- Claude API ---
+// ─── CLAUDE API ──────────────────────────────────────────────────────────────
 async function analyzeWithClaude(spokenText) {
   const apiKey = document.getElementById('apiKey').value.trim();
-  if (!apiKey) { showErrorFeedback('Inserisci la tua API key Anthropic.'); return; }
+  if (!apiKey) { showErrorFeedback('Inserisci la tua API key Anthropic.'); speak('Errore: chiave API mancante.'); return; }
 
   const { korean, meaning } = phrases[current];
   const feedbackArea = document.getElementById('feedbackArea');
-  feedbackArea.innerHTML = `<div class="feedback-box loading"><div class="spinner"></div> Analisi in corso...</div>`;
+  if (feedbackArea) feedbackArea.innerHTML = `<div class="feedback-box loading"><div class="spinner"></div> Analisi in corso...</div>`;
+  setStatus('speaking', 'Analisi in corso...');
 
   const prompt = `Sei un esperto di fonetica coreana che aiuta studenti italiani.
 
 Frase target: "${korean}" (significato: "${meaning}")
 Trascrizione di ciò che lo studente ha detto: "${spokenText}"
 
-Rispondi SOLO con JSON (niente altro):
+Rispondi SOLO con JSON (niente altro, niente backtick):
 {
   "score": <0-100>,
-  "title": "<titolo breve in italiano>",
-  "analysis": "<analisi dettagliata in italiano: cosa era giusto, cosa sbagliato, suggerimenti. Cita i fonemi coreani se utile.>",
-  "diff": "<confronto se ci sono differenze, altrimenti stringa vuota>"
+  "title": "<titolo breve in italiano, max 6 parole>",
+  "analysis": "<analisi in italiano, max 3 frasi: cosa giusto, cosa sbagliato, suggerimento principale>",
+  "diff": "<confronto breve se ci sono differenze, altrimenti stringa vuota>",
+  "voice_summary": "<testo da leggere ad alta voce, max 2 frasi colloquiali in italiano. Inizia con il punteggio e poi il suggerimento principale.>"
 }
 
 Score ≥ 80 = corretto. Considera varianti fonetiche accettabili (연음화, 경음화 ecc.).`;
@@ -645,7 +717,7 @@ Score ≥ 80 = corretto. Considera varianti fonetiche accettabili (연음화, �
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 800,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -658,14 +730,23 @@ Score ≥ 80 = corretto. Considera varianti fonetiche accettabili (연음화, �
     results[current] = result;
     renderNav();
     showStoredFeedback(result);
+
+    // Read the voice summary aloud
+    const toSay = result.voice_summary || `Punteggio ${result.score}. ${result.title}.`;
+    speak(toSay);
+
   } catch(e) {
     showErrorFeedback('Errore API: ' + e.message);
+    speak('Errore durante l\'analisi.');
   }
 }
 
+// ─── FEEDBACK DISPLAY ────────────────────────────────────────────────────────
 function showStoredFeedback(result) {
   const isGood = result.score >= 80;
-  document.getElementById('feedbackArea').innerHTML = `
+  const area = document.getElementById('feedbackArea');
+  if (!area) return;
+  area.innerHTML = `
     <div class="feedback-box ${isGood ? 'good' : 'bad'}">
       <div class="feedback-header">
         <div class="feedback-title">${result.title}</div>
@@ -679,8 +760,8 @@ function showStoredFeedback(result) {
 }
 
 function showErrorFeedback(msg) {
-  document.getElementById('feedbackArea').innerHTML =
-    `<div class="feedback-box bad"><div class="feedback-title">Errore</div><div class="feedback-body">${msg}</div></div>`;
+  const area = document.getElementById('feedbackArea');
+  if (area) area.innerHTML = `<div class="feedback-box bad"><div class="feedback-title">Errore</div><div class="feedback-body">${msg}</div></div>`;
 }
 </script>
 </body>
